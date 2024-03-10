@@ -104,6 +104,35 @@ const planet = new THREE.Mesh(
 
 scene.add(planet)
 
+//planet is set further down because we want to scroll down to zoom out to it
+planet.position.z = 30;
+planet.position.setX(-10);
+
+//////////////////////////////////////
+
+//FUNCTIONS//
+
+function moveCamera() {
+    //get dimensions of viewport and .top tells us how far from the top of the page we are
+    const t = document.body.getBoundingClientRect().top;
+
+    //rotate the objects when user scrolls
+    planet.rotation.x += 0.05;
+    planet.rotation.y += 0.075;
+    planet.rotation.z += 0.05;
+
+    avatar.rotation.y += 0.01;
+    avatar.rotation.z += 0.01;
+
+    //top will always be relative so we multiply by negative number to also move camera
+    camera.position.z = t * -0.01;
+    camera.position.x = t * -0.0002;
+    camera.position.y = t * -0.0002;
+
+}
+
+//assign this function to run every time user scrolls
+document.body.onscroll = moveCamera
 
 //function to recursively call the render method (rather than have to call it over and over manually)
 function animate() {
