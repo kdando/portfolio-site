@@ -51,6 +51,7 @@ scene.add(lightHelper, gridHelper)
 //this will listen to dom events on the mouse and update camera position accordingly
 const controls = new OrbitControls( camera, renderer.domElement );
 
+//BACKGROUND//////////////////////////////////
 //populate background with stars
 function addStar() {
     const geometry = new THREE.SphereGeometry(0.25, 24, 24);
@@ -74,6 +75,64 @@ Array(200).fill().forEach(addStar)
 const spaceTexture = new THREE.TextureLoader().load("./assets/skyboxorange.jpg");
 scene.background = spaceTexture
 
+////////////////////////////////////////
+
+//AVATAR///////////////////////////////
+const avatarTexture = new THREE.TextureLoader().load("./assets/zeitemoji.jpg");
+
+const avatar = new THREE.Mesh(
+    new THREE.BoxGeometry(3,3,3),
+    new THREE.MeshBasicMaterial( { map: avatarTexture })
+);
+
+scene.add(avatar)
+
+//////////////////////////////////////
+
+//PLANETOID//////////////////////////
+
+const planetTexture = new THREE.TextureLoader().load("./assets/plutomap2k.jpg");
+const planetNormalTexture = new THREE.TextureLoader().load("./assets/plutobump2k.jpg")
+
+const planet = new THREE.Mesh(
+    new THREE.SphereGeometry(3,32,32),
+    new THREE.MeshStandardMaterial( { 
+        map: planetTexture,
+        normalMap: planetNormalTexture
+     })
+)
+
+scene.add(planet)
+
+//planet is set further down because we want to scroll down to zoom out to it
+planet.position.z = 30;
+planet.position.setX(-10);
+
+//////////////////////////////////////
+
+//FUNCTIONS//
+
+function moveCamera() {
+    //get dimensions of viewport and .top tells us how far from the top of the page we are
+    const t = document.body.getBoundingClientRect().top;
+
+    //rotate the objects when user scrolls
+    planet.rotation.x += 0.05;
+    planet.rotation.y += 0.075;
+    planet.rotation.z += 0.05;
+
+    avatar.rotation.y += 0.01;
+    avatar.rotation.z += 0.01;
+
+    //top will always be relative so we multiply by negative number to also move camera
+    camera.position.z = t * -0.01;
+    camera.position.x = t * -0.0002;
+    camera.position.y = t * -0.0002;
+
+}
+
+//assign this function to run every time user scrolls
+document.body.onscroll = moveCamera
 
 //function to recursively call the render method (rather than have to call it over and over manually)
 function animate() {
