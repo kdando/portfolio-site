@@ -51,6 +51,7 @@ scene.add(lightHelper, gridHelper)
 //this will listen to dom events on the mouse and update camera position accordingly
 const controls = new OrbitControls( camera, renderer.domElement );
 
+//BACKGROUND//////////////////////////////////
 //populate background with stars
 function addStar() {
     const geometry = new THREE.SphereGeometry(0.25, 24, 24);
@@ -73,6 +74,35 @@ Array(200).fill().forEach(addStar)
 //.load also accepts callback function to be notified when image loads
 const spaceTexture = new THREE.TextureLoader().load("./assets/skyboxorange.jpg");
 scene.background = spaceTexture
+
+////////////////////////////////////////
+
+//AVATAR///////////////////////////////
+const avatarTexture = new THREE.TextureLoader().load("./assets/zeitemoji.jpg");
+
+const avatar = new THREE.Mesh(
+    new THREE.BoxGeometry(3,3,3),
+    new THREE.MeshBasicMaterial( { map: avatarTexture })
+);
+
+scene.add(avatar)
+
+//////////////////////////////////////
+
+//PLANETOID//////////////////////////
+
+const planetTexture = new THREE.TextureLoader().load("./assets/plutomap2k.jpg");
+const planetNormalTexture = new THREE.TextureLoader().load("./assets/plutobump2k.jpg")
+
+const planet = new THREE.Mesh(
+    new THREE.SphereGeometry(3,32,32),
+    new THREE.MeshStandardMaterial( { 
+        map: planetTexture,
+        normalMap: planetNormalTexture
+     })
+)
+
+scene.add(planet)
 
 
 //function to recursively call the render method (rather than have to call it over and over manually)
