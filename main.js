@@ -4,6 +4,9 @@ import './style.css';
 //import Three.js
 import * as THREE from "three";
 
+//import obrit controls from Three.js examples namespace
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+
 //Create scene, camera and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -44,13 +47,46 @@ const lightHelper = new THREE.PointLightHelper(pointLight)
 const gridHelper = new THREE.GridHelper(200,50)
 scene.add(lightHelper, gridHelper)
 
+//instantiate orbitcontrols class
+//this will listen to dom events on the mouse and update camera position accordingly
+const controls = new OrbitControls( camera, renderer.domElement );
+
+//populate background with stars
+function addStar() {
+    const geometry = new THREE.SphereGeometry(0.25, 24, 24);
+    const material = new THREE.MeshStandardMaterial( {color: 0xFFFFFF} );
+    const star = new THREE.Mesh( geometry, material );
+
+    //randomly position star in space
+    const [x,y,z] = Array(3).fill().map(() => {
+        return THREE.MathUtils.randFloatSpread(100);
+    })
+
+    star.position.set(x,y,z);
+    scene.add(star);
+}
+
+//determines the num of stars (the array) by running function to create star at each element of the array
+Array(200).fill().forEach(addStar)
+
+//set background image to space
+//.load also accepts callback function to be notified when image loads
+const spaceTexture = new THREE.TextureLoader().load("./assets/skyboxorange.jpg");
+scene.background = spaceTexture
+
 
 //function to recursively call the render method (rather than have to call it over and over manually)
 function animate() {
+
+    //recursively call itself
     requestAnimationFrame( animate );
+    //rotate torus every frame
     torus.rotation.x += 0.01;
     torus.rotation.y += 0.005;
     torus.rotation.z += 0.01;
+    //update controls, this allows dragging with click or zooming with wheel
+    controls.update()
+    //render
     renderer.render( scene, camera );
 }
 
